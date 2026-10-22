@@ -16,6 +16,9 @@ A terminal-based (TUI) network monitor for Windows that shows which applications
 - **Headless mode**: Scriptable output in text or JSON format
 - **Mouse support**: Click tabs, hover rows, select connections
 
+### Preview
+![NetTrack Preview](preview.png)
+
 ## Requirements
 
 - Windows 10 1809+ (version 17763 or later)

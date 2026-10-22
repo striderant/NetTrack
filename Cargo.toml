@@ -1,0 +1,78 @@
+[package]
+name = "nettrack"
+version = "0.1.0"
+edition = "2024"
+description = "Real-time network monitoring TUI for Windows - see which application talks to which IP and port"
+license = "MIT OR Apache-2.0"
+build = "build.rs"
+
+[dependencies]
+anyhow = "1.0.104"
+chrono = "0.4.45"
+crossterm = "0.29.0"
+maxminddb = { version = "0.32.0", optional = true }
+netstat2 = "0.11.2"
+ratatui = "0.30.2"
+rayon = "1.12.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sysinfo = "0.39.6"
+thiserror = "2.0.21"
+toml = "1.1.8"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+windows = { version = "0.62.2", features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_NetworkManagement_Ndis",
+    "Win32_NetworkManagement_Dns",
+    "Win32_NetworkManagement_WNet",
+    "Win32_Networking_WinSock",
+    "Win32_Security",
+    "Win32_System_Console",
+    "Win32_System_Diagnostics_Etw",
+    "Win32_System_LibraryLoader",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+    "Win32_System_SystemInformation",
+    "Win32_System_Com",
+    "Win32_System_Variant",
+    "Win32_UI_HiDpi",
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+] }
+
+# --- optional: raw packet capture + L7 protocol identification ---
+# Requires Npcap (https://npcap.com) installed at build and run time.
+# Build:  set LIBPCAP_LIBDIR="C:\Program Files\Npcap\SDK\Lib\x64"
+#         cargo build --release --features npcap
+pcap = { version = "2.5.0", optional = true }
+flowscope = { version = "0.26", optional = true, default-features = false, features = [
+    "extractors",
+    "tls",
+    "quic",
+    "http",
+    "http2",
+    "tls-fingerprints",
+    "pcap",
+] }
+ferrisetw = "1.2.0"
+crossbeam-channel = "0.5.17"
+ureq = { version = "3.5.0", default-features = false, features = ["native-tls", "gzip"] }
+
+[features]
+default = ["geoip"]
+geoip = ["dep:maxminddb"]
+npcap = ["dep:pcap", "dep:flowscope"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+
+[build-dependencies]
+# `native-tls` uses the Windows certificate store through Schannel, so no C
+# toolchain and no bundled TLS library are needed to build NetTrack.
+ureq = { version = "3.5.0", default-features = false, features = ["native-tls", "gzip"] }

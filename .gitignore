@@ -1,0 +1,17 @@
+# Ignore build artifacts
+target/
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# Ignore log files
+*.log
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore environment specific files
+.env
